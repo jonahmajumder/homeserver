@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# start Flask server
+
+if [[ $1 == "dev" ]]; then
+    echo "Starting flask server -- development version"
+    export FLASK_APP=server.py
+    export FLASK_ENV=development
+    flask run -p 5000
+elif [[ $1 == "prod" ]]; then
+    echo "Starting flask server -- development version"
+    gunicorn -b 0.0.0.0:5000 server:app 
+else
+    echo "Starting flask server -- (defaulting to) development version"
+    export FLASK_APP=server.py
+    export FLASK_ENV=development
+    flask run -p 5000
+fi

@@ -1,0 +1,6 @@
+secrets.py
+
+*.pyc
+*.pyo
+
+__pycache__/*
