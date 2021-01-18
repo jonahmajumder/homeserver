@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# this command will allow this script to be run without "./"
+# export PATH=$PATH:/Users/jonahmajumder/Code/Python/server
+
 # start Flask server
 
 if [[ $1 == "dev" ]]; then

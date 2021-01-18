@@ -1,0 +1,12 @@
+.banner {
+    text-align: center;
+    padding: 5px;
+    font-family: sans-serif;
+    margin: 5px;
+}
+
+.widgetcontainer {
+    border: 2px solid black;
+    text-align: center;
+    padding: 5px;
+}

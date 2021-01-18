@@ -2,9 +2,10 @@
     <head>
         <title>{{ title }}</title>
         <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
     </head>
     <body>
-        <h1>Welcome to the {{ title }} page!</h1>
-        <h3>You are logged in as "{{ username }}."</h3>
+        <h1 class="banner">Welcome to the {{ title }} page!</h1>
+        <h3 class="banner">You are logged in as <i>{{ username }}</i>.</h3>
     </body>
 </html>

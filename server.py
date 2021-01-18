@@ -6,10 +6,15 @@ from flask import (Flask,
     request, make_response,
     render_template
 )
+from phue import Bridge
 
 from secrets import USERNAME, PASSWORD
 
 app = Flask(__name__)
+
+b = Bridge('192.168.0.5')
+b.connect()
+l = b.lights[0]
 
 def protected(func):
     @wraps(func)
@@ -34,4 +39,13 @@ def protected(func):
 def index():
     username = request.authorization.username
     return render_template('index.html', title='Index', username=username)
+
+@app.route('/device', methods=['GET', 'POST'])
+@protected
+def device():
+    if request.method == 'POST':
+        newstate = bool(int(request.form['state']))
+        l.on = newstate
+
+    return render_template('binarydevice.html', name=l.name, link='index', state=l.on)
 
