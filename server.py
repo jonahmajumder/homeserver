@@ -6,15 +6,12 @@ from flask import (Flask,
     request, make_response,
     render_template
 )
-from phue import Bridge
+
+from lights import lights
 
 from secrets import USERNAME, PASSWORD
 
 app = Flask(__name__)
-
-b = Bridge('192.168.0.5')
-b.connect()
-l = b.lights[0]
 
 def protected(func):
     @wraps(func)
