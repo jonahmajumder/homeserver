@@ -7,11 +7,12 @@ import re
 from secrets import ROUTER_USERNAME, ROUTER_PASSWORD
 
 class Router(object):
-    """docstring for Router"""
+    
+    ADDRESS = '192.168.0.1'
+
     def __init__(self, *args, **kwargs):
         super().__init__()
 
-        self.address = args[0]
         self.auth = HTTPBasicAuth(kwargs['username'], kwargs['password'])
 
         self._get_devices()
@@ -58,7 +59,7 @@ class Router(object):
         
 
     def _get_devices(self):
-        url = parse.urlunsplit(('http', self.address, 'RgAttachedDevices.asp', '', ''))
+        url = parse.urlunsplit(('http', self.ADDRESS, 'RgAttachedDevices.asp', '', ''))
         r = requests.get(url, auth=self.auth)
         assert r.ok
 
@@ -89,7 +90,8 @@ class Router(object):
         else:
             return None
 
-
-rtr = Router('192.168.0.1', username=ROUTER_USERNAME, password=ROUTER_PASSWORD)
+if __name__ == '__main__':
+    rtr = Router(username=ROUTER_USERNAME, password=ROUTER_PASSWORD)
+    print(rtr.hostnames())
 
         
