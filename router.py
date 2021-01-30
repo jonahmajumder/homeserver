@@ -17,10 +17,23 @@ class Router(object):
 
         self._get_devices()
 
-    def _get_html(self):
+    def _get_html(self, **kwargs):
         url = parse.urlunsplit(('http', self.ADDRESS, 'RgAttachedDevices.asp', '', ''))
-        r = requests.get(url, auth=self.auth)
+        s = kwargs.get('session', requests.session())
+        r = s.get(url, auth=self.auth)
         assert r.ok
+
+        if parse.urlsplit(r.url).path.strip('/') == 'MultiLogin.asp':
+            form = BeautifulSoup(r.text, 'html.parser').find(id='target')
+            data = {i.attrs.get('name', ''):i.attrs.get('value', '') for i in form.find_all('input')}
+            data['Act'] = 'yes'
+            data.pop('')
+            data['yes'] = 'yes'
+            dest = parse.urljoin(r.url, form.attrs['action'])
+
+            s.post(dest, data=data)
+            
+            return self._get_html(session=s)
 
         return r.text
 
