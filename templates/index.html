@@ -7,11 +7,9 @@
     <body>
         <h1 class="banner">Welcome to the {{ title }} page!</h1>
         <h3 class="banner">You are logged in as <i>{{ username }}</i>.</h3>
-        <div>
-            {% for link in links %}
-                <h3 class="banner">
-                <a href="{{ link }}">{{ names[loop.index0] }}</a>
-                </h3>
+        <div class="previewcontainer">
+            {% for p in previews %}
+                {{ p|safe }}
             {% endfor %}
         </div>
     </body>

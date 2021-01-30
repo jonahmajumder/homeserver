@@ -15,21 +15,35 @@ class Device:
             self.status = status
             def identify(): return obj.name
             self.identify = identify
+            self.type = 'Hue'
         elif isinstance(obj, Wemo):
             self.turn_on = obj.on
             self.turn_off = obj.off
             self.status = obj.status
             self.identify = obj.identify
+            self.type = 'Wemo'
         else:
-            raise Exception('Unrecognized device!')
+            def turn_on(): print('Dummy on!')
+            self.turn_on = turn_on
+            def turn_off(): print('Dummy off!')
+            self.turn_off = turn_off
+            def status(): return True
+            self.status = status
+            def identify(): return 'Dummy Object'
+            self.identify = identify
+            self.type = 'Dummy'
 
-rtr = Router(username=ROUTER_USERNAME, password=ROUTER_PASSWORD)
+def retrieve_devices():
+    rtr = Router(username=ROUTER_USERNAME, password=ROUTER_PASSWORD)
 
-bridge_ip = rtr.hostname_to_ip('Philips-hue')
-b = Bridge(bridge_ip)
-lights = [l for l in b.lights if l.reachable]
+    bridge_ip = rtr.hostname_to_ip('Philips-hue')
+    b = Bridge(bridge_ip)
+    lights = [l for l in b.lights if l.reachable]
 
-wemo_ips = [d['ip_address'] for d in rtr.devices if 'wemo' in d['hostname']]
-wemos = [Wemo(ip) for ip in wemo_ips]
+    wemo_ips = [d['ip_address'] for d in rtr.devices if 'wemo' in d['hostname']]
+    wemos = [Wemo(ip) for ip in wemo_ips]
 
-device_list = [Device(d) for d in lights + wemos]
+    return [Device(d) for d in lights + wemos]
+
+def dummy_list(n=5):
+    return [Device(None) for i in range(n)]

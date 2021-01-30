@@ -6,20 +6,22 @@
     </head>
     <body>
         <h1 class="banner"><i>{{ name }}</i> Control Panel</h1>
-        <div class="widgetcontainer">
-            {% if state %}  
-            <h3>State: On</h3>
-            <form method="post">
-                  <input type="hidden" name="state" value="0">
-                  <input type="submit" value="Turn Off">
-            </form>
-            {% else %}
-            <h3>State: Off</h3>
-            <form method="post">
-                  <input type="hidden" name="state" value="1">
-                  <input type="submit" value="Turn On">
-            </form>
-            {% endif %}
+        <div class="previewcontainer">
+            <div class="item">
+                {% if state %}  
+                <h3>State: On</h3>
+                <form method="post">
+                      <input type="hidden" name="state" value="0">
+                      <input type="submit" value="Turn Off">
+                </form>
+                {% else %}
+                <h3>State: Off</h3>
+                <form method="post">
+                      <input type="hidden" name="state" value="1">
+                      <input type="submit" value="Turn On">
+                </form>
+                {% endif %}
+            </div>
         </div>
     </body>
 </html>

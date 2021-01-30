@@ -7,7 +7,9 @@ from flask import (Flask,
     render_template
 )
 
-from devices import device_list
+from devices import retrieve_devices, dummy_list
+
+device_list = dummy_list()
 
 from secrets import USERNAME, PASSWORD
 
@@ -35,9 +37,16 @@ def protected(func):
 @protected
 def index():
     username = request.authorization.username
-    names = [d.identify() for d in device_list]
-    links = ['/device{}'.format(i) for i in range(len(device_list))]
-    return render_template('index.html', title='Index', username=username, names=names, links=links)
+
+    previews = [render_template(
+        'preview.html',
+        link='/device{}'.format(i),
+        name=d.identify(),
+        type=d.type,
+        ind_color='lawngreen' if d.status() else 'darkgreen'
+        ) for (i,d) in enumerate(device_list)]
+
+    return render_template('index.html', title='home', username=username, previews=previews)
 
 
 def valid_device_num(strnum):

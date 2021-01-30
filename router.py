@@ -4,6 +4,7 @@ from requests.auth import HTTPBasicAuth
 from urllib import parse
 import re
 
+from ping import do_one
 from secrets import ROUTER_USERNAME, ROUTER_PASSWORD
 
 class Router(object):
@@ -15,7 +16,16 @@ class Router(object):
 
         self.auth = HTTPBasicAuth(kwargs['username'], kwargs['password'])
 
+        self.test_connection()
+
         self._get_devices()
+
+    def test_connection(self, timeout=3):
+        delay = do_one(self.ADDRESS, timeout)
+        if delay is None:
+            raise ConnectionError('Unable to reach router at {}.'.format(self.ADDRESS))
+        else:
+            print('Established connection to router at {}.'.format(self.ADDRESS))
 
     def _get_html(self, **kwargs):
         url = parse.urlunsplit(('http', self.ADDRESS, 'RgAttachedDevices.asp', '', ''))
