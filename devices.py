@@ -27,7 +27,7 @@ rtr = Router(username=ROUTER_USERNAME, password=ROUTER_PASSWORD)
 
 bridge_ip = rtr.hostname_to_ip('Philips-hue')
 b = Bridge(bridge_ip)
-lights = b.lights
+lights = [l for l in b.lights if l.reachable]
 
 wemo_ips = [d['ip_address'] for d in rtr.devices if 'wemo' in d['hostname']]
 wemos = [Wemo(ip) for ip in wemo_ips]

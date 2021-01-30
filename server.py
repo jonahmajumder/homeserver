@@ -35,7 +35,9 @@ def protected(func):
 @protected
 def index():
     username = request.authorization.username
-    return render_template('index.html', title='Index', username=username)
+    names = [d.identify() for d in device_list]
+    links = ['/device{}'.format(i) for i in range(len(device_list))]
+    return render_template('index.html', title='Index', username=username, names=names, links=links)
 
 
 def valid_device_num(strnum):
