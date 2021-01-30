@@ -20,9 +20,9 @@ class Router(object):
     def _parse_html(self, page):
         soup = BeautifulSoup(page, 'html.parser')
 
-        self.title = soup.find('title').text
+        self.title = soup.find('title').string
 
-        js = [s for s in soup.find_all('script') if 'src' not in s.attrs][0].text
+        js = [s for s in soup.find_all('script') if len(s.string) > 0][0].string
 
         devices = []
         wired = re.findall(r'new CPE_Info\((.+)\)', js)
