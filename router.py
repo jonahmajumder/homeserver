@@ -22,7 +22,7 @@ class Router(object):
 
         self.title = soup.find('title').string
 
-        js = [s for s in soup.find_all('script') if len(s.string) > 0][0].string
+        js = [s for s in soup.find_all('script') if s.string is not None][0].string
 
         devices = []
         wired = re.findall(r'new CPE_Info\((.+)\)', js)
