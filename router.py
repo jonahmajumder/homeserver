@@ -17,6 +17,13 @@ class Router(object):
 
         self._get_devices()
 
+    def _get_html(self):
+        url = parse.urlunsplit(('http', self.ADDRESS, 'RgAttachedDevices.asp', '', ''))
+        r = requests.get(url, auth=self.auth)
+        assert r.ok
+
+        return r.text
+
     def _parse_html(self, page):
         soup = BeautifulSoup(page, 'html.parser')
 
@@ -59,11 +66,8 @@ class Router(object):
         
 
     def _get_devices(self):
-        url = parse.urlunsplit(('http', self.ADDRESS, 'RgAttachedDevices.asp', '', ''))
-        r = requests.get(url, auth=self.auth)
-        assert r.ok
-
-        self._parse_html(r.text)
+        page = self._get_html()
+        self._parse_html(page)
 
     def hostnames(self, refresh=False):
         self._get_devices() if refresh or not self.retrieved else None
