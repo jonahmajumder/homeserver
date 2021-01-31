@@ -21,7 +21,7 @@ class Router(object):
         self._get_devices()
 
     def test_connection(self, timeout=1):
-        retval = ping(self.ADDRESS, timeout=timeout)
+        retval = ping(self.ADDRESS, timeout=timeout).returncode
         if retval != 0:
             raise ConnectionError('Unable to reach router at {}.'.format(self.ADDRESS))
         else:
