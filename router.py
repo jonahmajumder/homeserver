@@ -16,7 +16,7 @@ class Router(object):
 
         self.auth = HTTPBasicAuth(kwargs['username'], kwargs['password'])
 
-        self.test_connection()
+        # self.test_connection()
 
         self._get_devices()
 

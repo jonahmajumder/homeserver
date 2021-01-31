@@ -9,7 +9,7 @@ from flask import (Flask,
 
 from devices import retrieve_devices, dummy_list
 
-device_list = dummy_list()
+device_list = retrieve_devices()
 
 from secrets import USERNAME, PASSWORD
 
