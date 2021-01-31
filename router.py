@@ -4,7 +4,7 @@ from requests.auth import HTTPBasicAuth
 from urllib import parse
 import re
 
-from ping import do_one
+from ping import ping
 from secrets import ROUTER_USERNAME, ROUTER_PASSWORD
 
 class Router(object):
@@ -20,9 +20,9 @@ class Router(object):
 
         self._get_devices()
 
-    def test_connection(self, timeout=3):
-        delay = do_one(self.ADDRESS, timeout)
-        if delay is None:
+    def test_connection(self, timeout=1):
+        retval = ping(self.ADDRESS, timeout=timeout)
+        if retval != 0:
             raise ConnectionError('Unable to reach router at {}.'.format(self.ADDRESS))
         else:
             print('Established connection to router at {}.'.format(self.ADDRESS))
@@ -31,7 +31,7 @@ class Router(object):
         url = parse.urlunsplit(('http', self.ADDRESS, 'RgAttachedDevices.asp', '', ''))
         s = kwargs.get('session', requests.session())
         r = s.get(url, auth=self.auth)
-        assert r.ok
+        assert r.ok, 'Router requests failed with status code {0}, message {1}'.format(r.status_code, r.text)
 
         if parse.urlsplit(r.url).path.strip('/') == 'MultiLogin.asp':
             form = BeautifulSoup(r.text, 'html.parser').find(id='target')
