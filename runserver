@@ -1,5 +1,11 @@
 #!/bin/bash
 
+exe=$(which python)
+if [ "$exe" != $HOME/.virtualenvs/flask/bin/python ]; then
+    echo "Must be run in 'flask' virtualenv!";
+    exit 1;
+fi
+
 # this command will allow this script to be run without "./"
 # export PATH=$PATH:/Users/jonahmajumder/Code/Python/server
 

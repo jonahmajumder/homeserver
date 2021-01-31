@@ -16,16 +16,18 @@ class Router(object):
 
         self.auth = HTTPBasicAuth(kwargs['username'], kwargs['password'])
 
-        self.test_connection()
+        self.test_connection(tries=3)
 
         self._get_devices()
 
-    def test_connection(self, timeout=1):
-        retval = ping(self.ADDRESS, timeout=timeout).returncode
-        if retval != 0:
-            raise ConnectionError('Unable to reach router at {}.'.format(self.ADDRESS))
-        else:
-            print('Established connection to router at {}.'.format(self.ADDRESS))
+    def test_connection(self, timeout=1, tries=3):
+        for i in range(tries):  
+            retval = ping(self.ADDRESS, timeout=timeout).returncode
+            if retval == 0:
+                print('Established connection to router at {}.'.format(self.ADDRESS))
+                return
+
+        raise ConnectionError('Unable to reach router at {}.'.format(self.ADDRESS))                
 
     def _get_html(self, **kwargs):
         url = parse.urlunsplit(('http', self.ADDRESS, 'RgAttachedDevices.asp', '', ''))
