@@ -1,6 +1,10 @@
 from http import HTTPStatus
 from functools import wraps
 from pathlib import Path
+import json
+from datetime import datetime
+
+start = datetime.now()
 
 from flask import (Flask, 
     request, make_response,
@@ -31,6 +35,14 @@ def protected(func):
 
     return decorated
 
+@app.route('/status')
+def status():
+    current = datetime.now()
+    d = {
+        'status': 'ok',
+        'age': int((current - start).total_seconds())
+    }
+    return json.dumps(d)
 
 @app.route('/')
 @app.route('/index')
