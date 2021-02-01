@@ -14,6 +14,7 @@ from flask import (Flask,
 from devices import retrieve_devices, dummy_list
 
 device_list = retrieve_devices()
+# device_list = dummy_list()
 
 from secrets import USERNAME, PASSWORD
 
@@ -50,15 +51,23 @@ def status():
 def index():
     username = request.authorization.username
 
-    previews = [render_template(
-        'preview.html',
-        link='/device{}'.format(i),
-        name=d.identify(),
-        type=d.type,
-        ind_color='lawngreen' if d.status() else 'darkgreen'
-        ) for (i,d) in enumerate(device_list)]
-
-    return render_template('index.html', title='home', username=username, previews=previews)
+    if request.args.get('format', 'html') == 'json':
+        dicts = [dict(
+            link='/device{}'.format(i),
+            name=d.identify(),
+            type=d.type,
+            state=d.status()
+            ) for (i,d) in enumerate(device_list)]
+        return json.dumps(dicts)
+    else:
+        previews = [render_template(
+            'preview.html',
+            link='/device{}'.format(i),
+            name=d.identify(),
+            type=d.type,
+            ind_color='lawngreen' if d.status() else 'darkgreen'
+            ) for (i,d) in enumerate(device_list)]
+        return render_template('index.html', title='home', username=username, previews=previews)
 
 
 def valid_device_num(strnum):
@@ -78,10 +87,15 @@ def device(num):
             newstate = bool(int(request.form['state']))
             dev.turn_on() if newstate else dev.turn_off()
 
-        return render_template('binarydevice.html', name=dev.identify(), link='index', state=dev.status())
+        if request.args.get('format', 'html') == 'json':
+            return json.dumps(dict(name=dev.identify(), state=dev.status()))
+        else:
+            return render_template('binarydevice.html', name=dev.identify(), state=dev.status())
     else:
-        return make_response(
-            '<h2>Device not found!</h2>',
-            HTTPStatus.NOT_FOUND.value
-        )
+        if request.args.get('format', 'html') == 'json':
+            msg = json.dumps(dict(error='Device not found!'))
+        else:
+            msg = '<h2>Device not found!</h2>'
+        
+        return make_response(msg, HTTPStatus.NOT_FOUND.value)
 
