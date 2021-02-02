@@ -33,7 +33,9 @@ class Router(object):
         url = parse.urlunsplit(('http', self.ADDRESS, 'RgAttachedDevices.asp', '', ''))
         s = kwargs.get('session', requests.session())
         r = s.get(url, auth=self.auth)
-        assert r.ok, 'Router requests failed with status code {0}, message {1}'.format(r.status_code, r.text)
+        while not r.ok:
+            print('Router requests failed with status code {0}, message {1}.\nRetrying...'.format(r.status_code, r.text))
+            r = s.get(url, auth=self.auth)
 
         if parse.urlsplit(r.url).path.strip('/') == 'MultiLogin.asp':
             form = BeautifulSoup(r.text, 'html.parser').find(id='target')
