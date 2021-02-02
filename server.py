@@ -13,8 +13,8 @@ from flask import (Flask,
 
 from devices import retrieve_devices, dummy_list
 
-device_list = retrieve_devices()
-# device_list = dummy_list()
+# device_list = retrieve_devices()
+device_list = dummy_list()
 
 from secrets import USERNAME, PASSWORD
 
@@ -69,7 +69,6 @@ def index():
             ) for (i,d) in enumerate(device_list)]
         return render_template('index.html', title='home', username=username, previews=previews)
 
-
 def valid_device_num(strnum):
     try:
         device_list[int(strnum)]
@@ -84,7 +83,7 @@ def device(num):
         dev = device_list[int(num)]
 
         if request.method == 'POST':
-            newstate = bool(int(request.form['state']))
+            newstate = request.json['state']
             dev.turn_on() if newstate else dev.turn_off()
 
         if request.args.get('format', 'html') == 'json':

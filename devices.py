@@ -1,7 +1,7 @@
+import random
 from phue import Bridge, Light
 from wemo import Wemo
 from router import Router
-
 from secrets import ROUTER_USERNAME, ROUTER_PASSWORD
 
 class Device:
@@ -23,11 +23,12 @@ class Device:
             self.identify = obj.identify
             self.type = 'Wemo'
         else:
-            def turn_on(): print('Dummy on!')
+            self.on = bool(random.randint(0,1))
+            def turn_on(): self.on = True
             self.turn_on = turn_on
-            def turn_off(): print('Dummy off!')
+            def turn_off(): self.on = False
             self.turn_off = turn_off
-            def status(): return True
+            def status(): return self.on
             self.status = status
             def identify(): return 'Dummy Object'
             self.identify = identify
