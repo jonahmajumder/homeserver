@@ -4,11 +4,10 @@
         <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
         <script type="text/javascript">
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", window.location.href, true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            
             function sendData(inputelem) {
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", window.location.href, true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
                 xhr.send(JSON.stringify({state: inputelem.checked}));
             }
         </script>
