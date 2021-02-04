@@ -7,6 +7,10 @@ import re
 from ping import ping
 from secrets import ROUTER_USERNAME, ROUTER_PASSWORD
 
+MAC_LOOKUPS = {
+    'F8:F0:05:A6:C1:30': 'arduino'
+}
+
 class Router(object):
     
     ADDRESS = '192.168.0.1'
@@ -51,6 +55,10 @@ class Router(object):
 
         return r.text
 
+    def _cleanup(self, string):
+        s = string.replace('&nbsp;', ' ')
+        return s.strip()
+
     def _parse_html(self, page):
         soup = BeautifulSoup(page, 'html.parser')
 
@@ -62,30 +70,34 @@ class Router(object):
         wired = re.findall(r'new CPE_Info\((.+)\)', js)
         for w in wired:
             fields = re.findall(r'"([^"]+)"', w)
-            devices.append(
-                {
-                    'wireless': False,
-                    'hostname': fields[0],
-                    'status': fields[1],
-                    'ip_address': fields[2],
-                    'mac_address': fields[3]
-                }
-            )
+            d = {
+                'wireless': False,
+                'hostname': self._cleanup(fields[0]),
+                'status': self._cleanup(fields[1]),
+                'ip_address': self._cleanup(fields[2]),
+                'mac_address': self._cleanup(fields[3])
+            }
+            if len(d['hostname']) == 0:
+                d['hostname'] = MAC_LOOKUPS.get(d['mac_address'], '')
+
+            devices.append(d)
 
         wireless = re.findall(r'new WLCPE_Info\((.+)\)', js)
         for w in wireless:
             fields = re.findall(r'"([^"]+)"', w)
-            devices.append(
-                {
-                    'wireless': True,
-                    'hostname': fields[0],
-                    'status': fields[1],
-                    'ip_address': fields[2],
-                    'rssi': float(fields[3]),
-                    'mac_address': fields[4],
-                    'is_guest': bool(int(fields[5]))
-                }
-            )
+            d = {
+                'wireless': True,
+                'hostname': self._cleanup(fields[0]),
+                'status': self._cleanup(fields[1]),
+                'ip_address': self._cleanup(fields[2]),
+                'rssi': float(self._cleanup(fields[3])),
+                'mac_address': self._cleanup(fields[4]),
+                'is_guest': bool(int(self._cleanup(fields[5])))
+            }
+            if len(d['hostname']) == 0:
+                d['hostname'] = MAC_LOOKUPS.get(d['mac_address'], '')
+
+            devices.append(d)
 
         self.devices = devices
 
@@ -123,6 +135,6 @@ class Router(object):
 
 if __name__ == '__main__':
     rtr = Router(username=ROUTER_USERNAME, password=ROUTER_PASSWORD)
-    print(rtr.hostnames())
+    print(rtr.devices)
 
         
