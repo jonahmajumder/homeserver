@@ -25,10 +25,10 @@ class ArduinoRelay:
         return self._get_data()['state']
 
     def on(self):
-        self._set_data({'state': True})
+        self._set_data({'state': False})
 
     def off(self):
-        self._set_data({'state': False})
+        self._set_data({'state': True})
 
     def identify(self):
         return self.name
