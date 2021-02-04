@@ -22,7 +22,7 @@ class ArduinoRelay:
         return requests.post('http://{}'.format(self.ip), data=json.dumps(data)).json()
 
     def status(self):
-        return self._get_data()['state']
+        return not self._get_data()['state']
 
     def on(self):
         self._set_data({'state': False})
