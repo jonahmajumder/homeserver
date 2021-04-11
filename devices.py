@@ -81,10 +81,10 @@ def retrieve_devices():
     wemo_ips = [d['ip_address'] for d in rtr.devices if 'wemo' in d['hostname']]
     wemos = [Wemo(ip) for ip in wemo_ips]
 
-    arduino_ips = [d['ip_address'] for d in rtr.devices if 'arduino' in d['hostname']]
-    arduinos = [ArduinoRelay(ip) for ip in arduino_ips]
+#     arduino_ips = [d['ip_address'] for d in rtr.devices if 'arduino' in d['hostname']]
+#     arduinos = [ArduinoRelay(ip) for ip in arduino_ips]
 
-    return [Device(d) for d in lights + wemos + arduinos]
+    return [Device(d) for d in lights + wemos]
 
 def dummy_list(n=5):
     return [Device(None) for i in range(n)]
