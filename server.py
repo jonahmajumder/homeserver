@@ -57,7 +57,7 @@ def index():
             name=d.identify(),
             type=d.type,
             state=d.status()
-            ) for (i,d) in enumerate(device_list)]
+            ) for (i,d) in enumerate(device_list)] # wifi binary devices 
         return json.dumps(dicts)
     else:
         previews = [render_template(
@@ -66,7 +66,7 @@ def index():
             name=d.identify(),
             type=d.type,
             ind_color='lawngreen' if d.status() else 'darkgreen'
-            ) for (i,d) in enumerate(device_list)]
+            ) for (i,d) in enumerate(device_list)] # wifi binary devices
         return render_template('index.html', title='home', username=username, previews=previews)
 
 def valid_device_num(strnum):

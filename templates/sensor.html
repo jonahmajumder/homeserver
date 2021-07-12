@@ -1,0 +1,14 @@
+<html>
+    <head>
+        <title>{{ name }}</title>
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <link rel="apple-touch-icon" href="{{ url_for('static', filename='favicon.png') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
+    </head>
+    <body>
+        <h1 class="banner"><i>{{ name }}</i> Readout</h1>
+        <div class="devicecontainer">
+            <h2 class="banner">{{ value }}</h2>
+        </div>
+    </body>
+</html>
