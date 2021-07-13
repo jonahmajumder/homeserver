@@ -12,8 +12,10 @@ from flask import (Flask,
 )
 
 from devices import retrieve_devices, dummy_list
+from sensors import retrieve_sensors
 
 device_list = retrieve_devices()
+sensor_list = retrieve_sensors()
 # device_list = dummy_list()
 
 from secrets import USERNAME, PASSWORD
@@ -52,21 +54,36 @@ def index():
     username = request.authorization.username
 
     if request.args.get('format', 'html') == 'json':
-        dicts = [dict(
+        device_dicts = [dict(
             link='/device{}'.format(i),
             name=d.identify(),
             type=d.type,
             state=d.status()
-            ) for (i,d) in enumerate(device_list)] # wifi binary devices 
+            ) for (i,d) in enumerate(device_list)] # wifi binary devices
+        sensor_dicts = [dict(
+            link='/sensor{}'.format(i),
+            name=s.identify(),
+            type=s.type,
+            value=s.value()
+            ) for (i,s) in enumerate(sensor_list)] # sensors
+        dicts = device_dicts + sensor_dicts
         return json.dumps(dicts)
     else:
-        previews = [render_template(
-            'preview.html',
+        device_previews = [render_template(
+            'device_preview.html',
             link='/device{}'.format(i),
             name=d.identify(),
             type=d.type,
             ind_color='lawngreen' if d.status() else 'darkgreen'
             ) for (i,d) in enumerate(device_list)] # wifi binary devices
+        sensor_previews = [render_template(
+            'sensor_preview.html',
+            link='/sensor{}'.format(i),
+            name=s.identify(),
+            type=s.type,
+            value=s.valuestr()
+            ) for (i,s) in enumerate(sensor_list)] # sensors
+        previews = device_previews + sensor_previews
         return render_template('index.html', title='home', username=username, previews=previews)
 
 def valid_device_num(strnum):
@@ -97,4 +114,29 @@ def device(num):
             msg = '<h2>Device not found!</h2>'
         
         return make_response(msg, HTTPStatus.NOT_FOUND.value)
+        
+def valid_sensor_num(strnum):
+    try:
+        sensor_list[int(strnum)]
+        return True
+    except:
+        return False
 
+
+@app.route('/sensor<num>', methods=['GET'])
+@protected
+def sensor(num):
+    if valid_sensor_num(num):
+        s = sensor_list[int(num)]
+
+        if request.args.get('format', 'html') == 'json':
+            return json.dumps(dict(name=s.identify(), value=s.value()))
+        else:
+            return render_template('sensor.html', name=s.identify(), quantity=s.quantity, value=s.valuestr())
+    else:
+        if request.args.get('format', 'html') == 'json':
+            msg = json.dumps(dict(error='Sensor not found!'))
+        else:
+            msg = '<h2>Sensor not found!</h2>'
+        
+        return make_response(msg, HTTPStatus.NOT_FOUND.value)

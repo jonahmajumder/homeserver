@@ -1,6 +1,7 @@
 import os
 import glob
 import re
+import random
 
 class ThermometerError(Exception):
 	pass
@@ -25,7 +26,10 @@ class Thermometer:
 		f = open(self.path)
 		lines = f.readlines()
 		f.close()
-		return [l.strip() for l in lines] # remove whitespace
+		if len(lines) != 2:
+			raise ThermometerError('Thermometer did not output 2 lines!')
+		else:
+			return [l.strip() for l in lines] # remove whitespace
 		
 	def parse_raw(self, lines):
 		crcMatch = re.search('crc=[a-z0-9]{2}\s([A-Z]+)', lines[0])
@@ -54,3 +58,32 @@ class Thermometer:
 		tF = self.C2F(tC)
 		return tF
 		
+		
+class Sensor:
+	def __init__(self, obj):
+		self.obj = obj
+		if isinstance(obj, Thermometer):
+			self.value = obj.get_temp_F
+			self.valuestr = lambda: '{:.1f} °F'.format(self.value())
+			self.identify = lambda: 'One-Wire Thermometer'
+			self.quantity = 'Temperature'
+			self.type = 'Thermometer'
+		else:
+			self.value = random.random
+			self.valuestr = lambda: '{:.2f}'.format(self.value())
+			self.identify = lambda: 'RNG'
+			self.quantity = 'Random Number'
+			self.type = 'Dummy'
+			
+def retrieve_sensors():
+	sensors = []
+	
+	try:
+		t = Thermometer()
+		t.get_temp_F()
+		sensors.append(Sensor(t))
+	except ThermometerError:
+		pass
+	
+	return sensors
+
