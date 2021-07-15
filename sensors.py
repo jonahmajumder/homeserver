@@ -5,7 +5,7 @@ class Sensor:
 	def __init__(self, obj):
 		self.obj = obj
 		if isinstance(obj, Thermometer):
-			self.value = obj.get_temp_F
+			self.value = obj.get_value
 			self.valuestr = lambda: '{:.1f} °F'.format(self.value())
 			self.identify = lambda: 'One-Wire Thermometer'
 			self.quantity = 'Temperature'
@@ -22,7 +22,8 @@ def retrieve_sensors():
 	
 	try:
 		t = Thermometer()
-		t.get_temp_F()
+		t.get_temp_F() # test for read/parse error before adding
+		t.start_sampling()
 		sensors.append(Sensor(t))
 	except ThermometerError:
 		pass

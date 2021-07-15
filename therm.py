@@ -74,4 +74,8 @@ class Thermometer:
 	def stop_sampling(self):
 		self.active = False
 		
+	def get_value(self):
+		if not self.active:
+			print('Warning: sampling not active, value may be outdated.')
+		return self._value
 
