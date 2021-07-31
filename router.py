@@ -36,12 +36,14 @@ class Router(object):
     def _get_html(self, **kwargs):
         url = parse.urlunsplit(('http', self.ADDRESS, 'RgAttachedDevices.asp', '', ''))
         s = kwargs.get('session', requests.session())
-        r = s.get(url, auth=self.auth)
+        s.auth = self.auth
+        r = s.get(url)
         while not r.ok:
             print('Router requests failed with status code {0}, message {1}.\nRetrying...'.format(r.status_code, r.text))
-            r = s.get(url, auth=self.auth)
+            r = s.get(url)
 
         if parse.urlsplit(r.url).path.strip('/') == 'MultiLogin.asp':
+            # print('Encountered ''new device'' page.')
             form = BeautifulSoup(r.text, 'html.parser').find(id='target')
             data = {i.attrs.get('name', ''):i.attrs.get('value', '') for i in form.find_all('input')}
             data['Act'] = 'yes'

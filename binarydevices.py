@@ -34,7 +34,7 @@ class ArduinoRelay:
         return self.name
 
 
-class Device:
+class BinaryDevice:
     def __init__(self, obj):
         self.obj = obj
         if isinstance(obj, Light):
@@ -71,7 +71,7 @@ class Device:
             self.identify = identify
             self.type = 'Dummy'
 
-def retrieve_devices():
+def retrieve_binarydevices():
     rtr = Router(username=ROUTER_USERNAME, password=ROUTER_PASSWORD)
 
     bridge_ip = rtr.hostname_to_ip('Philips-hue')
@@ -84,8 +84,8 @@ def retrieve_devices():
 #     arduino_ips = [d['ip_address'] for d in rtr.devices if 'arduino' in d['hostname']]
 #     arduinos = [ArduinoRelay(ip) for ip in arduino_ips]
 
-    return [Device(d) for d in lights + wemos]
+    return [BinaryDevice(d) for d in lights + wemos]
 
 def dummy_list(n=5):
-    return [Device(None) for i in range(n)]
+    return [BinaryDevice(None) for i in range(n)]
 

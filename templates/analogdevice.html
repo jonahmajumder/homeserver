@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <title>{{ name }}</title>
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <link rel="apple-touch-icon" href="{{ url_for('static', filename='favicon.png') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
+        <script type="text/javascript">
+            function sendOnoffData(inputelem) {
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", window.location.href, true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify({state: inputelem.checked}));
+            }
+            function sendLevelData(inputelem) {
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", window.location.href, true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify({level: inputelem.value}));
+            }
+        </script>
+    </head>
+    <body>
+        <h1 class="banner"><i>{{ name }}</i> Control Panel</h1>
+        <div class="devicecontainer">
+            <h2 class="banner">State</h2>
+            <label class="switch">
+                <input type="checkbox" {% if state %}checked{% endif %} onchange="sendOnoffData(this);"> 
+                <span class="slider round"></span>
+            </label>
+            <input type="range" min="0" max="100" value="{{ level }}" class="slider" onchange="sendLevelData(this);">
+        </div>
+    </body>
+</html>
