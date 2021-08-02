@@ -13,8 +13,8 @@ class AnalogDevice:
             self.turn_on = turn_on
             def turn_off(): obj.on = False
             self.turn_off = turn_off
-            def onoff_status(): return obj.on
-            self.onoff_status = onoff_status
+            def status(): return obj.on
+            self.status = status
             def set_level(l): obj.brightness = max(0, min(int(l/100*255), 255)) # level is 0 to 100
             self.set_level = set_level
             def get_level(): return obj.brightness/255*100

@@ -17,6 +17,7 @@ from sensors import retrieve_sensors
 
 binarydevice_list = retrieve_binarydevices()
 analogdevice_list = retrieve_analogdevices()
+device_list = binarydevice_list + analogdevice_list
 # sensor_list = retrieve_sensors()
 sensor_list = []
 # device_list = dummy_list()
@@ -82,7 +83,7 @@ def index():
             link='/analogdevice{}'.format(i),
             name=d.identify(),
             type=d.type,
-            state=d.onoff_status(),
+            state=d.status(),
             level='{:.1f}'.format(d.get_level())
             ) for (i,d) in enumerate(analogdevice_list)] # analog devices
         dicts = binarydevice_dicts + sensor_dicts + analogdevice_dicts
@@ -107,25 +108,18 @@ def index():
             link='/analogdevice{}'.format(i),
             name=d.identify(),
             type=d.type,
-            state=d.onoff_status(),
+            state=d.status(),
             level='{:.1f}'.format(d.get_level()),
-            ind_color='lawngreen' if d.onoff_status() else 'darkgreen'
+            ind_color='lawngreen' if d.status() else 'darkgreen'
             ) for (i,d) in enumerate(analogdevice_list)] # analog devices
         previews = binarydevice_previews + sensor_previews + analogdevice_previews
         return render_template('index.html', title='home', username=username, previews=previews)
 
-def valid_binarydevice_num(strnum):
-    try:
-        binarydevice_list[int(strnum)]
-        return True
-    except:
-        return False
 
 @app.route('/binarydevice<num>', methods=['GET', 'POST'])
-@app.route('/device<num>', methods=['GET', 'POST']) # for backwards compatibility
 @protected
 def binarydevice(num):
-    if valid_binarydevice_num(num):
+    if num.isnumeric() and int(num) in range(len(binarydevice_list)):
         bindev = binarydevice_list[int(num)]
 
         if request.method == 'POST':
@@ -143,19 +137,12 @@ def binarydevice(num):
             msg = '<h2>Binary device not found!</h2>'
         
         return make_response(msg, HTTPStatus.NOT_FOUND.value)
-        
-def valid_sensor_num(strnum):
-    try:
-        sensor_list[int(strnum)]
-        return True
-    except:
-        return False
 
 
 @app.route('/sensor<num>', methods=['GET'])
 @protected
 def sensor(num):
-    if valid_sensor_num(num):
+    if num.isnumeric() and int(num) in range(len(sensor_list)):
         s = sensor_list[int(num)]
 
         if request.args.get('format', 'html') == 'json':
@@ -171,17 +158,10 @@ def sensor(num):
         return make_response(msg, HTTPStatus.NOT_FOUND.value)
 
 
-def valid_analogdevice_num(strnum):
-    try:
-        analogdevice_list[int(strnum)]
-        return True
-    except:
-        return False
-
 @app.route('/analogdevice<num>', methods=['GET', 'POST'])
 @protected
 def analogdevice(num):
-    if valid_analogdevice_num(num):
+    if num.isnumeric() and int(num) in range(len(analogdevice_list)):
         adev = analogdevice_list[int(num)]
 
         if request.method == 'POST':
@@ -193,9 +173,9 @@ def analogdevice(num):
                 adev.set_level(int(newlevel))
 
         if request.args.get('format', 'html') == 'json':
-            return json.dumps(dict(name=adev.identify(), state=adev.onoff_status(), level=adev.get_level()))
+            return json.dumps(dict(name=adev.identify(), state=adev.status(), level=adev.get_level()))
         else:
-            return render_template('analogdevice.html', name=adev.identify(), state=adev.onoff_status(), level=adev.get_level())
+            return render_template('analogdevice.html', name=adev.identify(), state=adev.status(), level=adev.get_level())
     else:
         if request.args.get('format', 'html') == 'json':
             msg = json.dumps(dict(error='Analog device not found!'))
@@ -203,3 +183,28 @@ def analogdevice(num):
             msg = '<h2>Analog device not found!</h2>'
         
         return make_response(msg, HTTPStatus.NOT_FOUND.value)
+
+
+@app.route('/device<num>', methods=['GET', 'POST'])
+@protected
+def device(num):
+    if num.isnumeric() and int(num) in range(len(device_list)):
+        dev = device_list[int(num)]
+
+        if request.method == 'POST':
+            if 'state' in request.json:
+                newstate = request.json['state']
+                dev.turn_on() if newstate else dev.turn_off()
+
+        if request.args.get('format', 'html') == 'json':
+            return json.dumps(dict(name=dev.identify(), state=dev.status()))
+        else:
+            return render_template('binarydevice.html', name=dev.identify(), state=dev.status())
+    else:
+        if request.args.get('format', 'html') == 'json':
+            msg = json.dumps(dict(error='Device not found!'))
+        else:
+            msg = '<h2>Device not found!</h2>'
+        
+        return make_response(msg, HTTPStatus.NOT_FOUND.value)
+

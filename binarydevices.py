@@ -74,17 +74,17 @@ class BinaryDevice:
 def retrieve_binarydevices():
     rtr = Router(username=ROUTER_USERNAME, password=ROUTER_PASSWORD)
 
-    bridge_ip = rtr.hostname_to_ip('Philips-hue')
-    b = Bridge(bridge_ip)
-    lights = [l for l in b.lights if l.reachable]
+    # bridge_ip = rtr.hostname_to_ip('Philips-hue')
+    # b = Bridge(bridge_ip)
+    # lights = [l for l in b.lights if l.reachable]
 
     wemo_ips = [d['ip_address'] for d in rtr.devices if 'wemo' in d['hostname']]
     wemos = [Wemo(ip) for ip in wemo_ips]
 
-#     arduino_ips = [d['ip_address'] for d in rtr.devices if 'arduino' in d['hostname']]
-#     arduinos = [ArduinoRelay(ip) for ip in arduino_ips]
+    # arduino_ips = [d['ip_address'] for d in rtr.devices if 'arduino' in d['hostname']]
+    # arduinos = [ArduinoRelay(ip) for ip in arduino_ips]
 
-    return [BinaryDevice(d) for d in lights + wemos]
+    return [BinaryDevice(d) for d in wemos]
 
 def dummy_list(n=5):
     return [BinaryDevice(None) for i in range(n)]

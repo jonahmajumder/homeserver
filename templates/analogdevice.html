@@ -27,7 +27,9 @@
                 <input type="checkbox" {% if state %}checked{% endif %} onchange="sendOnoffData(this);"> 
                 <span class="slider round"></span>
             </label>
-            <input type="range" min="0" max="100" value="{{ level }}" class="slider" onchange="sendLevelData(this);">
+            <h2></h2>
+            <h2 class="banner">Level</h2>
+            <input type="range" min="0" max="100" value="{{ level }}" class="range" onchange="sendLevelData(this);">
         </div>
     </body>
 </html>
