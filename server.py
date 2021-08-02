@@ -18,8 +18,7 @@ from sensors import retrieve_sensors
 binarydevice_list = retrieve_binarydevices()
 analogdevice_list = retrieve_analogdevices()
 device_list = binarydevice_list + analogdevice_list
-# sensor_list = retrieve_sensors()
-sensor_list = []
+sensor_list = retrieve_sensors()
 # device_list = dummy_list()
 
 print('Found {:d} binary devices, {:d} analog devices, {:d} sensors'.format(
@@ -77,8 +76,6 @@ def index():
             type=s.type,
             value=s.value()
             ) for (i,s) in enumerate(sensor_list)] # sensors
-        dicts = binarydevice_dicts + sensor_dicts
-        return json.dumps(dicts)
         analogdevice_dicts = [dict(
             link='/analogdevice{}'.format(i),
             name=d.identify(),
